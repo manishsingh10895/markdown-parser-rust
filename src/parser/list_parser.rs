@@ -1,9 +1,6 @@
-use crate::parser::utils;
-use crate::parser::Parser;
+use crate::parser::{tags, tags::TagType, utils, Parser};
 use regex::Regex;
 
-use crate::parser::tags;
-use crate::parser::tags::TagType;
 impl Parser {
     /// Checks if next set of character represents a ordered list element
     /// eg: `1.` `22.`
