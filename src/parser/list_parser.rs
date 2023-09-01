@@ -41,7 +41,7 @@ impl Parser {
         self.wrap_elements("ol", items)
     }
 
-    /// Parses a unordered list in markdown content
+    /// Parses an unordered list in markdown content
     pub fn parse_list(&mut self) -> String {
         let mut items: Vec<String> = vec![];
         let mut i = 0;

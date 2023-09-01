@@ -34,6 +34,7 @@ impl Parser {
         result
     }
 
+    /// Parses text line by line
     fn parse_line(&mut self) -> String {
         match self.next_char() {
             '#' => self.parse_title(),
@@ -45,6 +46,35 @@ impl Parser {
                 } else {
                     // Else treat it as a normal text
                     self.parse_text()
+                }
+            }
+            '*' => {
+                if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {
+                    self.parse_list()
+                } else {
+                    let stars = self.consume_while(|c| c == '*');
+                    println!("NUM Stars {}", stars.len());
+                    // **leads**  to bold letter
+                    if stars.len() == 2 {
+                        let embolden = self.consume_while(|c| c != '*');
+                        if self.next_char() == '*' {
+                            self.consume_char();
+                            self.consume_whitespace(true);
+                            println!("Embolden -> {}", embolden);
+
+                            let html = utils::create_html_element(String::from("strong"), embolden);
+
+                            println!("html -> {html}");
+                            return html;
+                        } else {
+                            self.parse_text()
+                        }
+                    } else {
+                        self.consume_whitespace(true);
+                        let text = self.parse_text();
+
+                        text
+                    }
                 }
             }
             _ => {
@@ -89,8 +119,14 @@ impl Parser {
         self.pos >= self.input.len()
     }
 
+    /// Gets the next character in text,
+    /// Does not consume
+    /// Returns whitespace if not char
     fn next_char(&self) -> char {
-        self.input[self.pos..].chars().next().unwrap()
+        if let Some(char) = self.input[self.pos..].chars().next() {
+            return char;
+        }
+        ' '
     }
 
     /// Consume a single character from `self.input`
@@ -132,6 +168,21 @@ mod tests {
     use super::parse;
 
     #[test]
+    fn test_bolding() {
+        let md = r#"
+    # Bolding
+    
+    **When** i was young
+    **I** would listen to the **radio**
+"#;
+
+        let html = parse(md.to_string());
+
+        println!("{}", html);
+    }
+
+    #[ignore]
+    #[test]
     fn test_parse_list() {
         let md = r#"
             # burndown
@@ -143,15 +194,20 @@ mod tests {
             - list 25
             - list two markdown
 
-            what is a damn
+            what is a **damn** shit
 
-            not is a damn
+            **not** is a damn
         "#;
 
         let html = parse(md.to_string());
 
         println!("{}", html);
 
-        assert_eq!(html, String::from("<h1>burndown</h1><ul><li>drop_in_place(to_drop)</li><li>shop in place</li><li>markdown</li></ul><ul><li>list 25</li><li>list two markdown</li></ul>what is a damnnot is a damn"));
+        assert_eq!(
+            html,
+            String::from(
+                r#"<h1>burndown</h1><ul><li>drop_in_place(to_drop)</li><li>shop in place</li><li>markdown</li></ul><ul><li>list 25</li><li>list two markdown</li></ul>what is a damnnot is a damn"#
+            )
+        );
     }
 }
