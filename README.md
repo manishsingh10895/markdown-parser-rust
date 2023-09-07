@@ -2,29 +2,36 @@
 
 Simple Markdown parser in rust which is compiled to `wasm` and presented to browser with `svelte`
 
-### To build just the rust part 
-* ` cargo build `
-* `wasm-pack build` 
+### To build just the rust part
 
-### Run rust tests 
+- `cargo build`
+- `wasm-pack build`
+
+### Run rust tests
+
 `cargo test`
 
+### To setup frontend
 
-### To setup frontend 
 `cd web` and `yarn`
 
 ### To run every thing after compiling to wasm
+
 `cd web` and `yarn dev`
 
-
 ### Currently supports parsing
-* unordered lists 
-* ordered lists
-* simple texts
-* Headings (**#**, **##**, **###**)
-* Bold text, \*\*text\*\*
-* Code \`code\`
 
+- unordered lists
+- ordered lists
+- simple texts
+- Headings (**#**, **##**, **###**)
+- Bold text, \*\*text\*\*
+- Code \`code\`
 
-### Preview 
+### Preview
+
 ![preview](./web/public/demo.png "Preview")
+
+### Demo
+
+[demo](https://manishsingh10895.github.io/markdown-parser-rust)
