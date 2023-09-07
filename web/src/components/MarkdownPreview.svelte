@@ -23,5 +23,6 @@
         overflow-y: auto;
         background: #78909c;
         color: white;
+        padding: 10px 15px;
     }
 </style>

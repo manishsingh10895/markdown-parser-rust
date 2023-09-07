@@ -22,6 +22,8 @@ Simple Markdown parser in rust which is compiled to `wasm` and presented to brow
 * ordered lists
 * simple texts
 * Headings (**#**, **##**, **###**)
+* Bold text, \*\*text\*\*
+* Code \`code\`
 
 
 ### Preview 
