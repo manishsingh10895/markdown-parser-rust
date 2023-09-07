@@ -125,7 +125,7 @@ impl Parser {
     fn parse_title(&mut self) -> String {
         let pound = self.consume_while(|c| c == '#');
         self.consume_whitespace(true);
-        let text = self.parse_text_line();
+        let text = self.parse_md_line();
 
         utils::create_html_element(format!("h{}", pound.len()), text)
     }

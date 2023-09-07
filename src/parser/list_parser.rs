@@ -17,22 +17,33 @@ impl Parser {
     pub fn parse_ordered_list(&mut self) -> String {
         let mut items: Vec<String> = vec![];
 
-        'outer: loop {
+        loop {
             self.consume_whitespace(false);
 
+            // check if starting character are for an ordered list only
             if !self.check_if_ordered_list_marker() {
                 break;
             }
 
+            // consume while there are only numbers
             self.consume_while(|c| !char::is_whitespace(c) && char::is_numeric(c));
 
+            // check if next char is .
+            // to match like 11.
             if self.next_char() != '.' {
                 break;
             } else {
                 self.consume_char();
             }
+
             self.consume_whitespace(false);
 
+            let text = self.parse_md_line();
+            items.push(text);
+
+            // if newline char,
+            // check if there are more than one new line
+            // if more than one, list if finished
             if self.next_char() == '\n' {
                 self.consume_char();
 
@@ -40,9 +51,6 @@ impl Parser {
                     break;
                 }
             }
-
-            let text = self.parse_md_line();
-            items.push(text);
         }
 
         self.wrap_elements("ol", items)
@@ -116,7 +124,7 @@ impl Parser {
 mod tests {
     use crate::parser::parse;
 
-    #[ignore]
+    // #[ignore]
     #[test]
     fn test_parse_ordered_list() {
         let md = r#"

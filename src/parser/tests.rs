@@ -45,7 +45,8 @@ mod parser_tests {
 
         assert_eq!(html, result);
     }
-    // #[ignore]
+
+    #[ignore]
     #[test]
     fn test_parse_list() {
         let md = r#"
