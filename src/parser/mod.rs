@@ -48,7 +48,7 @@ impl Parser {
                 self.consume_char();
                 if self.next_char() == '\n' {
                     self.consume_char();
-                    return "\n<br/>\n".to_string();
+                    return "\n</br></br>\n".to_string();
                 }
 
                 String::from(" ")

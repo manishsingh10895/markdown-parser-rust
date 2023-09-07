@@ -7,5 +7,6 @@ export default defineConfig({
   plugins: [wasm(), svelte()],
   build: {
     target: "esnext",
+    outDir: "../docs",
   },
 });
