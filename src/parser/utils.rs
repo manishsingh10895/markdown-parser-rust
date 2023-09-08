@@ -4,10 +4,6 @@ pub fn create_html_element(tag_name: impl Into<String>, text: impl Into<String>)
     format!("<{}>{}</{}>", tag_name, text, tag_name)
 }
 
-pub fn is_newline(c: char) -> bool {
-    c == '\n'
-}
-
 pub fn is_whitespace(c: char) -> bool {
     matches!(c, '\t' | '\x0C' | '\r' | ' ')
 }

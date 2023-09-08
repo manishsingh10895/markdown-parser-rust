@@ -1,5 +1,3 @@
-use std::ops::Add;
-
 mod list_parser;
 mod tags;
 mod tests;
@@ -60,11 +58,10 @@ impl Parser {
                 if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {
                     self.parse_list()
                 } else {
-                    let mut text = String::new();
                     // Else treat it as a normal text
-                    let parsed = self.parse_text_line();
+                    let parsed = self.parse_md_line();
 
-                    return text;
+                    return parsed;
                 }
             }
             '*' => {

@@ -28,6 +28,12 @@ Simple Markdown parser in rust which is compiled to `wasm` and presented to brow
 - Bold text, \*\*text\*\*
 - Code \`code\`
 
+### Using as an npm package
+
+This is also published as an `npm` package. Can be used in frontend projects using
+
+> `npm i -S wasm_md_parser`
+
 ### Preview
 
 ![preview](./web/public/demo.png "Preview")
