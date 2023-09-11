@@ -27,6 +27,7 @@ Simple Markdown parser in rust which is compiled to `wasm` and presented to brow
 - Headings (**#**, **##**, **###**)
 - Bold text, \*\*text\*\*
 - Code \`code\`
+- Anchor Links (x)[y]
 
 ### Using as an npm package
 
