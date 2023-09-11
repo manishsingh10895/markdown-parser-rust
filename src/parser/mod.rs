@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 mod list_parser;
 mod tags;
 mod tests;
@@ -20,6 +22,7 @@ pub fn parse(source: String) -> String {
 }
 
 impl Parser {
+    #[allow(dead_code)]
     pub fn new(md: String) -> Self {
         Parser { pos: 0, input: md }
     }
@@ -44,14 +47,12 @@ impl Parser {
         match self.next_char() {
             '\n' => {
                 self.consume_char();
-                if self.next_char() == '\n' {
-                    self.consume_char();
-                    return "\n</br></br>\n".to_string();
-                }
 
-                String::from(" ")
+                return "\n</br>\n".to_string();
             }
+            // title
             '#' => self.parse_title(),
+            // unorderd list
             '-' => {
                 // check if the next char is whitespace and if it is
                 // parses the items at list
@@ -59,11 +60,12 @@ impl Parser {
                     self.parse_list()
                 } else {
                     // Else treat it as a normal text
-                    let parsed = self.parse_md_line();
+                    let parsed = self.parse_md_line(None);
 
                     return parsed;
                 }
             }
+            // unordered list, or bold
             '*' => {
                 if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {
                     self.parse_list()
@@ -99,7 +101,7 @@ impl Parser {
                 if self.check_if_ordered_list_marker() {
                     return self.parse_ordered_list();
                 }
-                return self.parse_md_line();
+                return self.parse_md_line(None);
             }
         }
     }
@@ -122,7 +124,7 @@ impl Parser {
     fn parse_title(&mut self) -> String {
         let pound = self.consume_while(|c| c == '#');
         self.consume_whitespace(true);
-        let text = self.parse_md_line();
+        let text = self.parse_md_line(None);
 
         utils::create_html_element(format!("h{}", pound.len()), text)
     }
@@ -147,12 +149,26 @@ impl Parser {
     /// wouldn't work if first char is `-` or `*`
     /// bold, italic etc until the end of line
     /// and returns HTML content
-    pub fn parse_md_line(&mut self) -> String {
+    pub fn parse_md_line(&mut self, delimiter: Option<char>) -> String {
         let mut result = String::new();
 
-        while (self.pos < self.input.len())
-            && (self.next_char() != '\n' || utils::is_whitespace(self.next_char()))
-        {
+        // If delimiter is provided
+        // while loop ends at the delimiter
+        // else the loop runs till new line
+        let cond: Box<dyn Fn(&mut Parser) -> bool> = if let Some(delimiter) = delimiter {
+            Box::new(move |this| {
+                this.pos < this.input.len()
+                    && (this.next_char() != '\n' || utils::is_whitespace(this.next_char()))
+                    && this.next_char() != delimiter
+            })
+        } else {
+            Box::new(move |this| {
+                this.pos < this.input.len()
+                    && (this.next_char() != '\n' || utils::is_whitespace(this.next_char()))
+            })
+        };
+
+        while cond(self) {
             let normal_text = self.parse_alpha_numeric(true);
 
             result.push_str(&normal_text);
@@ -160,6 +176,77 @@ impl Parser {
             match self.next_char() {
                 '\n' => {
                     break;
+                }
+                // starting for a link
+                '[' => {
+                    let mut html = String::new();
+
+                    self.consume_char();
+
+                    self.consume_whitespace(false);
+
+                    let title_text = self.consume_while(|c| c != '\n' && c != ']');
+                    let title_text = title_text.trim();
+
+                    if self.next_char() == ']' {
+                        self.consume_char();
+
+                        if self.next_char() == '(' {
+                            self.consume_char();
+                            self.consume_whitespace(false);
+                            let link_text = self.consume_while(|c| !c.is_whitespace() && c != ')');
+
+                            if self.next_char() == ')' {
+                                self.consume_char();
+                                let attrs = HashMap::from([("href".to_string(), link_text)]);
+
+                                let html =
+                                    utils::create_html_element_with_attrs("a", title_text, attrs);
+
+                                result.push_str(&html);
+                            } else {
+                                html.push('[');
+                                html.push_str(&title_text);
+                                html.push(']');
+                                html.push('(');
+                                html.push_str(&link_text);
+                            }
+                        } else {
+                            let text = self.parse_alpha_numeric(true);
+                            html.push('[');
+                            html.push_str(&title_text);
+                            html.push(']');
+                            html.push_str(&text);
+                        }
+                    } else {
+                        html.push('[');
+                        html.push_str(&title_text);
+                    }
+
+                    result.push_str(&html);
+                }
+                // italics
+                //
+                '_' => {
+                    let mut html = String::new();
+
+                    self.consume_char();
+
+                    let md_text = self.parse_md_line(Some('_'));
+
+                    if self.end_of_line() {
+                        break;
+                    }
+
+                    if self.next_char() == '_' {
+                        self.consume_char();
+                        html = utils::create_html_element("em", md_text);
+                    } else {
+                        html.push('_');
+                        html.push_str(&md_text);
+                    }
+
+                    result.push_str(&html);
                 }
                 '*' => {
                     let f_stars = self.peek_ahead_while(|c| *c == '*');
@@ -216,6 +303,11 @@ impl Parser {
                     continue;
                 }
                 _ => {
+                    if let Some(delimiter) = delimiter {
+                        if self.next_char() == delimiter {
+                            return result;
+                        }
+                    }
                     let text = self.consume_while(|c| c != '\n');
                     result.push_str(&text);
                     continue;

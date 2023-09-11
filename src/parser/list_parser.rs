@@ -38,7 +38,7 @@ impl Parser {
 
             self.consume_whitespace(false);
 
-            let text = self.parse_md_line();
+            let text = self.parse_md_line(None);
             items.push(text);
 
             // if newline char,
@@ -70,7 +70,7 @@ impl Parser {
             self.consume_whitespace(true);
 
             //Get all the remaining text in line
-            let text = self.parse_md_line();
+            let text = self.parse_md_line(None);
 
             items.push(text);
 

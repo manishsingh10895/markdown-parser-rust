@@ -37,7 +37,7 @@ mod parser_tests {
             input: md.to_string(),
         };
 
-        let html = p.parse_md_line();
+        let html = p.parse_md_line(None);
 
         let result = "Markdown, has a wonder *may, be I, and **someone, <strong>else</strong>";
 
@@ -72,5 +72,32 @@ mod parser_tests {
         //         r#"<h1>burndown</h1><ul><li>drop_in_place()</li><li>shop in place</li><li>markdown</li></ul><ul><li>list 25</li><li>list two markdown</li></ul>what is a <strong>damn</strong> shit<strong>not</strong>is a damn"#
         //     )
         // );
+    }
+
+    #[test]
+    fn test_parse_nested_italics() {
+        let md = "What in the _`markdown`_ is this shit";
+        let html = parse(md.to_string());
+
+        println!("{html}");
+
+        assert_eq!(
+            html,
+            "What in the <em><code>markdown</code></em> is this shit"
+        );
+    }
+
+    #[test]
+    fn test_link() {
+        let md = "Where was this [movie](https://www.imdb.com/title/tt3960412) forever";
+
+        let html = parse(md.to_string());
+
+        assert_eq!(
+            html,
+            String::from(
+                r#"Where was this <a href="https://www.imdb.com/title/tt3960412">movie</a> forever"#
+            )
+        );
     }
 }
