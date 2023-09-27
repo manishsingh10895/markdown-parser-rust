@@ -7,7 +7,9 @@ impl Parser {
     /// This function doesn't consume the `input` and doesn't move the `pos`
     pub fn check_if_ordered_list_marker(&self) -> bool {
         let reg = Regex::new(r"([0-9])+\.").unwrap();
-        let peeked = self.peek_ahead_while(|c| !char::is_whitespace(*c));
+        let peeked = self.peek_ahead_while(|c| {
+            return !char::is_whitespace(*c) && (c.is_numeric() || *c == '.');
+        });
 
         return reg.is_match(&peeked);
     }

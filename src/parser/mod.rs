@@ -65,6 +65,43 @@ impl Parser {
                     return parsed;
                 }
             }
+            '`' => {
+                let mut result = String::new();
+                let peeked = self.peek_ahead_while(|c| *c == '`');
+
+                if peeked.len() == 3 {
+                    self.consume_while(|c| c == '`');
+                } else {
+                    return self.parse_md_line(None);
+                }
+
+                loop {
+                    let mut line = self.consume_while(|c| c != '\n');
+
+                    if line.trim() == "```" {
+                        break;
+                    }
+
+                    if self.next_char() == '\n' {
+                        self.consume_char();
+                        line.push_str("<br/>");
+                    }
+
+                    println!("LIN -> {line}");
+
+                    if self.end_of_line() {
+                        break;
+                    }
+
+                    println!("POS {}, Size: {}", self.pos, self.input.len());
+
+                    result.push_str(&line);
+                }
+
+                let result = utils::create_html_element("pre", result);
+
+                result
+            }
             // unordered list, or bold
             '*' => {
                 if char::is_whitespace(self.input[self.pos + 1..].chars().next().unwrap()) {

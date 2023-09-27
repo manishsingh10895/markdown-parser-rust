@@ -28,6 +28,21 @@ mod parser_tests {
         println!("{}", html);
     }
 
+    #[test]
+    fn test_parse_code_block() {
+        let md = r#"
+        Markdonw Wonder
+        ```
+        Let me go
+        To the place 
+        ```
+        "#;
+
+        let html = parse(md.to_string());
+
+        println!("{html}");
+    }
+
     #[ignore]
     #[test]
     fn test_parse_md_line() {
