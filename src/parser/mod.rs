@@ -12,7 +12,7 @@ pub struct Parser {
 }
 
 /// Create a new `Parser` instance and
-/// parses the g   wawaive **markdown** input
+/// parses the given **markdown** input
 pub fn parse(source: String) -> String {
     Parser {
         pos: 0,
@@ -38,6 +38,8 @@ impl Parser {
 
             result.push_str(&self.parse_line());
         }
+
+        result = format!("<div class='markdown'>\n\t {result} \n\t </div>");
 
         result
     }
