@@ -39,7 +39,7 @@ impl Parser {
             result.push_str(&self.parse_line());
         }
 
-        result = format!("<div class='markdown'>\n\t {result} \n\t </div>");
+        result = format!("<div class='wasm_md_markdown'> \n\t {result} \n </div>");
 
         result
     }
