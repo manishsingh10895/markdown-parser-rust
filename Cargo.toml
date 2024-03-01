@@ -1,7 +1,11 @@
 [package]
-name = "markdown_parser"
-version = "0.3.3"
+authors = ["Manish <manishsingh10895@gmail.com>"]
+description = "A markdown parser written in Rust and compiled to WebAssembly"
 edition = "2021"
+license = "MIT"
+name = "markdown_parser"
+repository = "https://github.com/manishsingh10895/markdown-parser-rust"
+version = "0.3.4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,8 +13,8 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2.91"
-web-sys = {version= "0.3.68", features= ["console"]}
-console_error_panic_hook="0.1.7"
+clap = {version = "4.5.1", features = ["derive"]}
+console_error_panic_hook = "0.1.7"
 regex = "1.10.3"
-clap = { version= "4.5.1", features=["derive"]}
+wasm-bindgen = "0.2.91"
+web-sys = {version = "0.3.68", features = ["console"]}
