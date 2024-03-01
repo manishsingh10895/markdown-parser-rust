@@ -1,19 +1,17 @@
 #[cfg(test)]
 mod parser_tests {
-    use crate::parser::{parse, Parser};
+    use crate::parser::{parse, Parser, MD_WRAPPER};
 
-    #[ignore]
     #[test]
     fn it_should_parse_code() {
         let md = "`wonder` if `I ` could have been `some `thing";
         let parsed = parse(md.to_string());
 
         println!("{parsed}");
-        let html = "<code>wonder</code> if <code>I </code> could have been <code>some </code>thing";
+        let html = format!("{MD_WRAPPER} <code>wonder</code> if <code>I </code> could have been <code>some </code>thing \n </div>");
         assert_eq!(parsed, html)
     }
 
-    #[ignore]
     #[test]
     fn test_bolding() {
         let md = r#"
@@ -43,7 +41,6 @@ mod parser_tests {
         println!("{html}");
     }
 
-    #[ignore]
     #[test]
     fn test_parse_md_line() {
         let md = "Markdown, has a wonder *may, be I, and **someone, **else**";
@@ -61,7 +58,6 @@ mod parser_tests {
         assert_eq!(html, result);
     }
 
-    #[ignore]
     #[test]
     fn test_parse_list() {
         let md = r#"
@@ -98,7 +94,9 @@ mod parser_tests {
 
         assert_eq!(
             html,
-            "What in the <em><code>markdown</code></em> is this shit"
+            format!(
+                "{MD_WRAPPER} What in the <em><code>markdown</code></em> is this shit \n </div>"
+            )
         );
     }
 
@@ -110,8 +108,8 @@ mod parser_tests {
 
         assert_eq!(
             html,
-            String::from(
-                r#"Where was this <a href="https://www.imdb.com/title/tt3960412">movie</a> forever"#
+            format!(
+                "{MD_WRAPPER} Where was this <a href=\"https://www.imdb.com/title/tt3960412\">movie</a> forever \n </div>"
             )
         );
     }

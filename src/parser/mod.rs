@@ -21,6 +21,8 @@ pub fn parse(source: String) -> String {
     .parse_lines()
 }
 
+pub const MD_WRAPPER: &str = "<div class='wasm_md_markdown'>";
+
 impl Parser {
     #[allow(dead_code)]
     pub fn new(md: String) -> Self {
@@ -39,7 +41,7 @@ impl Parser {
             result.push_str(&self.parse_line());
         }
 
-        result = format!("<div class='wasm_md_markdown'> \n\t {result} \n </div>");
+        result = format!("{MD_WRAPPER} {result} \n </div>");
 
         result
     }

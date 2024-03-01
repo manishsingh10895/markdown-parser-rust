@@ -13,9 +13,9 @@ Simple Markdown parser in rust which is compiled to `wasm` and presented to brow
 
 ### To setup frontend
 
-`cd web` and `yarn`
+`cd web` and `yarn` or `npm install`
 
-### To run every thing after compiling to wasm
+### To run everything after compiling to wasm
 
 `cd web` and `yarn dev`
 
@@ -28,6 +28,16 @@ Simple Markdown parser in rust which is compiled to `wasm` and presented to brow
 - Bold text, \*\*text\*\*
 - Code \`code\`
 - Anchor Links (x)[y]
+
+### Using through CLI
+
+md_parser is also available as a CLI tool
+
+USAGE: 
+```bash
+md_parser --file <input_file>
+```
+
 
 ### Using as an npm package
 
